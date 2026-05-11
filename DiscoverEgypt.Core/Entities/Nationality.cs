@@ -1,0 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace DiscoverEgypt.Core.Entities
+{
+    public class Nationality : BaseEntity
+    {
+        public string Name { get; set; }
+        public ICollection<ApplicationUser> Users { get; set; } = new HashSet<ApplicationUser>();
+    }
+}

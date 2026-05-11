@@ -1,0 +1,26 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DiscoverEgypt.Core.Features.Places.DTOs
+{
+    public class UpdatePlaceDto
+    {
+        [MaxLength(200)]
+        public string? Name { get; set; }
+
+        public string? Description { get; set; }
+
+        [MaxLength(100)]
+        public string? City { get; set; }
+
+        public decimal? Latitude { get; set; }
+        public decimal? Longitude { get; set; }
+        public TimeSpan? AverageVisitDuration { get; set; }
+
+        [Range(0, double.MaxValue)]
+        public decimal? TicketPrice { get; set; }
+
+        public TimeSpan? OpeningTime { get; set; }
+        public TimeSpan? ClosingTime { get; set; }
+        public int? CategoryId { get; set; }
+    }
+}

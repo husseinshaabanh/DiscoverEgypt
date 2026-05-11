@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using DiscoverEgypt.Core.Enum;
+using System.ComponentModel.DataAnnotations;
+
+namespace DiscoverEgypt.Core.Entities
+{
+    public class TouristProfile
+    {
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
+        public int Points { get; set; } = 0;
+        public ICollection<Booking> Bookings { get; set; } = new HashSet<Booking>();
+        public ICollection<Notification> Notifications { get; set; } = new HashSet<Notification>();
+        public ICollection<Review> Reviews { get; set; } = new HashSet<Review>();
+        public ICollection<CommunityPost> CommunityPosts { get; set; } = new HashSet<CommunityPost>();
+        public ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
+        public ICollection<Requset> BookingRequests { get; set; } = new HashSet<Requset>();
+        public ICollection<Conversation> Conversations { get; set; } = new HashSet<Conversation>();
+        public ICollection<CustomPlan> CustomPlans { get; set; } = new HashSet<CustomPlan>();
+    }
+}

@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="DiscoverEgypt.API/DiscoverEgypt.API.csproj" />
+  <Project Path="DiscoverEgypt.Core/DiscoverEgypt.Core.csproj" />
+  <Project Path="DiscoverEgypt.Repository/DiscoverEgypt.Repository.csproj" />
+  <Project Path="DiscoverEgypt.Service/DiscoverEgypt.Service.csproj" />
+</Solution>

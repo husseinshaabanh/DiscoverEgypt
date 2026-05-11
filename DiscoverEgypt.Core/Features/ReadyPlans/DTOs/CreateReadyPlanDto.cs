@@ -1,0 +1,32 @@
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+
+namespace DiscoverEgypt.Core.Features.ReadyPlans.DTOs
+{
+    public class CreateReadyPlanDto
+    {
+        [Required, MaxLength(200)]
+        public string Title { get; set; }
+
+        [Required]
+        public string Description { get; set; }
+
+        [Range(0, double.MaxValue)]
+        public decimal Price { get; set; }
+
+        [Required]
+        public DateTime StartDateTime { get; set; }
+
+        [Required]
+        public DateTime EndDateTime { get; set; }
+
+        [Required]
+        public string GuideId { get; set; }
+
+        [Required]
+        public int CompanyId { get; set; }
+
+        public IFormFile? Image { get; set; }
+        public List<int> PlaceIds { get; set; } = new();
+    }
+}
