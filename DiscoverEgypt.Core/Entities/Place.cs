@@ -16,8 +16,10 @@ namespace DiscoverEgypt.Core.Entities
         public TimeSpan ClosingTime { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; }
+        public string? ImageUrl { get; set; }
         public ICollection<PlanPlace> PlanPlaces { get; set; } = new HashSet<PlanPlace>();
         public ICollection<Review> Reviews { get; set; } = new HashSet<Review>();
-        public ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
+        public ICollection<Tag> Tags { get; set; } = new HashSet<Tag>(); 
+        public ICollection<PlacePhoto> Photos { get; set; } = new HashSet<PlacePhoto>();
     }
 }

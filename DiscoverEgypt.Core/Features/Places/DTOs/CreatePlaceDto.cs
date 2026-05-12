@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace DiscoverEgypt.Core.Features.Places.DTOs
 {
@@ -29,5 +30,7 @@ namespace DiscoverEgypt.Core.Features.Places.DTOs
 
         [Required]
         public int CategoryId { get; set; }
+        public IFormFile? MainImage { get; set; }
+        public List<IFormFile>? Photos { get; set; }
     }
 }

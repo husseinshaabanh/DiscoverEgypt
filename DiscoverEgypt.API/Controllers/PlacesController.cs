@@ -37,7 +37,7 @@ namespace DiscoverEgypt.API.Controllers
         /// <summary>Creates a new place. Admin only.</summary>
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] CreatePlaceDto dto)
+        public async Task<IActionResult> Create([FromForm] CreatePlaceDto dto) // ← FromForm
         {
             var result = await _placeService.CreateAsync(dto);
             return StatusCode(201, result);
@@ -46,7 +46,7 @@ namespace DiscoverEgypt.API.Controllers
         /// <summary>Updates an existing place. Admin only.</summary>
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdatePlaceDto dto)
+        public async Task<IActionResult> Update(int id, [FromForm] UpdatePlaceDto dto) // ← FromForm
         {
             await _placeService.UpdateAsync(id, dto);
             return Ok(new { message = "Place updated successfully" });
@@ -59,6 +59,24 @@ namespace DiscoverEgypt.API.Controllers
         {
             await _placeService.DeleteAsync(id);
             return Ok(new { message = "Place deleted successfully" });
+        }
+
+        /// <summary>Adds photos to an existing place. Admin only.</summary>
+        [HttpPost("{id}/photos")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AddPhotos(int id, [FromForm] List<IFormFile> photos)
+        {
+            await _placeService.AddPhotosAsync(id, photos);
+            return Ok(new { message = "Photos added successfully" });
+        }
+
+        /// <summary>Deletes a specific photo from a place. Admin only.</summary>
+        [HttpDelete("{id}/photos/{photoId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeletePhoto(int id, int photoId)
+        {
+            await _placeService.DeletePhotoAsync(id, photoId);
+            return Ok(new { message = "Photo deleted successfully" });
         }
     }
 }

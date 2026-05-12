@@ -14,7 +14,9 @@ namespace DiscoverEgypt.Core.Mapping
                 .ForMember(dest => dest.Latitude,
                     opt => opt.MapFrom(src => src.Location.Latitude))
                 .ForMember(dest => dest.Longitude,
-                    opt => opt.MapFrom(src => src.Location.Longitude));
+                    opt => opt.MapFrom(src => src.Location.Longitude))
+                .ForMember(dest => dest.Photos,
+                    opt => opt.MapFrom(src => src.Photos.Select(p => p.ImageUrl).ToList()));
 
             CreateMap<CreatePlaceDto, Place>()
                 .ForMember(dest => dest.Location,
@@ -22,7 +24,9 @@ namespace DiscoverEgypt.Core.Mapping
                     {
                         Latitude = src.Latitude,
                         Longitude = src.Longitude
-                    }));
+                    }))
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.Photos, opt => opt.Ignore());
         }
     }
 }

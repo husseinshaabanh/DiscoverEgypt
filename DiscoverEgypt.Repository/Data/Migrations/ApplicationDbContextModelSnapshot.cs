@@ -639,6 +639,9 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -655,6 +658,29 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Places");
+                });
+
+            modelBuilder.Entity("DiscoverEgypt.Core.Entities.PlacePhoto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaceId");
+
+                    b.ToTable("PlacePhotos");
                 });
 
             modelBuilder.Entity("DiscoverEgypt.Core.Entities.PlanPlace", b =>
@@ -1227,6 +1253,17 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("DiscoverEgypt.Core.Entities.PlacePhoto", b =>
+                {
+                    b.HasOne("DiscoverEgypt.Core.Entities.Place", "Place")
+                        .WithMany("Photos")
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Place");
+                });
+
             modelBuilder.Entity("DiscoverEgypt.Core.Entities.PlanPlace", b =>
                 {
                     b.HasOne("DiscoverEgypt.Core.Entities.Place", "Place")
@@ -1494,6 +1531,8 @@ namespace DiscoverEgypt.Repository.Data.Migrations
 
             modelBuilder.Entity("DiscoverEgypt.Core.Entities.Place", b =>
                 {
+                    b.Navigation("Photos");
+
                     b.Navigation("PlanPlaces");
 
                     b.Navigation("Reviews");

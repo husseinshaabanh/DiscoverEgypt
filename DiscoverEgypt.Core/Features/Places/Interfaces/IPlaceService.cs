@@ -1,4 +1,5 @@
 ﻿using DiscoverEgypt.Core.Features.Places.DTOs;
+using Microsoft.AspNetCore.Http;
 
 namespace DiscoverEgypt.Core.Features.Places.Interfaces
 {
@@ -9,5 +10,7 @@ namespace DiscoverEgypt.Core.Features.Places.Interfaces
         Task<PlaceDto> CreateAsync(CreatePlaceDto dto);
         Task UpdateAsync(int id, UpdatePlaceDto dto);
         Task DeleteAsync(int id);
+        Task AddPhotosAsync(int placeId, List<IFormFile> photos);
+        Task DeletePhotoAsync(int placeId, int photoId);
     }
 }

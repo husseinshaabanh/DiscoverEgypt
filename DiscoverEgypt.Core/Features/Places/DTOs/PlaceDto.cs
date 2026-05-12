@@ -12,5 +12,7 @@
         public decimal Longitude { get; set; }
         public TimeSpan OpeningTime { get; set; }
         public TimeSpan ClosingTime { get; set; }
+        public string? ImageUrl { get; set; }
+        public List<string> Photos { get; set; } = new();
     }
 }

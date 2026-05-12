@@ -34,6 +34,7 @@ namespace DiscoverEgypt.Repository.Data.DBContext
         public DbSet<Language> Languages { get; set; }
         public DbSet<GuideLanguage> GuideLanguages { get; set; }       
         public DbSet<Place> Places { get; set; }
+        public DbSet<PlacePhoto> PlacePhotos { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<BasePlan> BasePlans { get; set; }
