@@ -2,7 +2,7 @@
 
 namespace DiscoverEgypt.Core.Features.Review.DTOs
 {
-    public class CreateReviewDto
+    public class CreatePlaceReviewDto
     {
         [Required]
         public int PlaceId { get; set; }

@@ -41,7 +41,8 @@ namespace DiscoverEgypt.Repository.Data.DBContext
         public DbSet<CustomPlan> CustomPlans { get; set; }
         public DbSet<ReadyPlan> ReadyPlans { get; set; }
         public DbSet<Booking> Bookings { get; set; }
-        public DbSet<Review> Reviews { get; set; }
+        public DbSet<PlaceReview> PlaceReviews { get; set; }
+        public DbSet<GuideReview> GuideReviews { get; set; }
         public DbSet<CommunityPost> CommunityPosts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Conversation> Conversations { get; set; }

@@ -7,27 +7,22 @@ using DiscoverEgypt.Core.Entities;
 
 namespace DiscoverEgypt.Repository.Data.Configurations
 {
-    public class ReviewConfiguration : IEntityTypeConfiguration<Review>
+    public class ReviewConfiguration : IEntityTypeConfiguration<PlaceReview>
     {
-        public void Configure(EntityTypeBuilder<Review> builder)
+        public void Configure(EntityTypeBuilder<PlaceReview> builder)
         {
-            builder.Property(review => review.Rating)
-                   .IsRequired();
+            builder.Property(r => r.Rating).IsRequired();
+            builder.Property(r => r.Comment).IsRequired().HasMaxLength(1000);
 
-            builder.HasOne(review => review.Tourist)
-                   .WithMany(tourist => tourist.Reviews)
-                   .HasForeignKey(review => review.TouristId)
+            builder.HasOne(r => r.Tourist)
+                   .WithMany(t => t.PlaceReviews)
+                   .HasForeignKey(r => r.TouristId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(review => review.Place)
-                   .WithMany(place => place.Reviews)
-                   .HasForeignKey(review => review.PlaceId)
-                   .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(review => review.Guide)
-                   .WithMany(guide => guide.Reviews)
-                   .HasForeignKey(review => review.GuideId)
-                   .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(r => r.Place)
+                   .WithMany(p => p.Reviews)
+                   .HasForeignKey(r => r.PlaceId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(r => r.CreatedAt)
                    .HasDefaultValueSql("GETUTCDATE()");

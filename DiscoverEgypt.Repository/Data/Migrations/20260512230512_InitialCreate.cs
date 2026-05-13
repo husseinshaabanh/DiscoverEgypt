@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DiscoverEgypt.Repository.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class ExModule : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -114,7 +114,8 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                     TicketPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     OpeningTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     ClosingTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -180,6 +181,26 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                         name: "FK_RoleClaims_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PlacePhotos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PlaceId = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlacePhotos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlacePhotos_Places_PlaceId",
+                        column: x => x.PlaceId,
+                        principalTable: "Places",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -600,35 +621,28 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reviews",
+                name: "PlaceReviews",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Rating = table.Column<int>(type: "int", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     TouristId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PlaceId = table.Column<int>(type: "int", nullable: false),
-                    GuideId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.PrimaryKey("PK_PlaceReviews", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Reviews_Guides_GuideId",
-                        column: x => x.GuideId,
-                        principalTable: "Guides",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Reviews_Places_PlaceId",
+                        name: "FK_PlaceReviews_Places_PlaceId",
                         column: x => x.PlaceId,
                         principalTable: "Places",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Reviews_Tourists_TouristId",
+                        name: "FK_PlaceReviews_Tourists_TouristId",
                         column: x => x.TouristId,
                         principalTable: "Tourists",
                         principalColumn: "UserId",
@@ -658,6 +672,42 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                         principalTable: "ReadyPlans",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GuideReviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    TouristId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GuideId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BookingId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GuideReviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GuideReviews_Bookings_BookingId",
+                        column: x => x.BookingId,
+                        principalTable: "Bookings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_GuideReviews_Guides_GuideId",
+                        column: x => x.GuideId,
+                        principalTable: "Guides",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_GuideReviews_Tourists_TouristId",
+                        column: x => x.TouristId,
+                        principalTable: "Tourists",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -842,6 +892,21 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                 column: "LanguageId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_GuideReviews_BookingId",
+                table: "GuideReviews",
+                column: "BookingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GuideReviews_GuideId",
+                table: "GuideReviews",
+                column: "GuideId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GuideReviews_TouristId",
+                table: "GuideReviews",
+                column: "TouristId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Guides_LicenseNumber",
                 table: "Guides",
                 column: "LicenseNumber",
@@ -872,6 +937,21 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                 name: "IX_Payments_BookingId",
                 table: "Payments",
                 column: "BookingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlacePhotos_PlaceId",
+                table: "PlacePhotos",
+                column: "PlaceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlaceReviews_PlaceId",
+                table: "PlaceReviews",
+                column: "PlaceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlaceReviews_TouristId",
+                table: "PlaceReviews",
+                column: "TouristId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Places_CategoryId",
@@ -927,21 +1007,6 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                 name: "IX_Requests_TouristProfileUserId",
                 table: "Requests",
                 column: "TouristProfileUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reviews_GuideId",
-                table: "Reviews",
-                column: "GuideId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reviews_PlaceId",
-                table: "Reviews",
-                column: "PlaceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reviews_TouristId",
-                table: "Reviews",
-                column: "TouristId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -1001,6 +1066,9 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                 name: "GuideLanguages");
 
             migrationBuilder.DropTable(
+                name: "GuideReviews");
+
+            migrationBuilder.DropTable(
                 name: "Messages");
 
             migrationBuilder.DropTable(
@@ -1013,6 +1081,12 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                 name: "Payments");
 
             migrationBuilder.DropTable(
+                name: "PlacePhotos");
+
+            migrationBuilder.DropTable(
+                name: "PlaceReviews");
+
+            migrationBuilder.DropTable(
                 name: "PlaceTags");
 
             migrationBuilder.DropTable(
@@ -1023,9 +1097,6 @@ namespace DiscoverEgypt.Repository.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Requests");
-
-            migrationBuilder.DropTable(
-                name: "Reviews");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
@@ -1058,16 +1129,19 @@ namespace DiscoverEgypt.Repository.Data.Migrations
                 name: "Tags");
 
             migrationBuilder.DropTable(
+                name: "Places");
+
+            migrationBuilder.DropTable(
                 name: "ReadyPlans");
 
             migrationBuilder.DropTable(
                 name: "CustomPlans");
 
             migrationBuilder.DropTable(
-                name: "Places");
+                name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Company");
@@ -1077,9 +1151,6 @@ namespace DiscoverEgypt.Repository.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Tourists");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Users");

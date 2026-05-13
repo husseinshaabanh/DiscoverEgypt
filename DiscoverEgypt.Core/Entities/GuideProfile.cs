@@ -23,7 +23,7 @@ namespace DiscoverEgypt.Core.Entities
         public DateTime? EndDate { get; set; }
 
         public ICollection<Booking> Bookings { get; set; } = new HashSet<Booking>();
-        public ICollection<Review> Reviews { get; set; } = new HashSet<Review>();
+        public ICollection<GuideReview> GuideReviews { get; set; } = new HashSet<GuideReview>();
         public ICollection<ReadyPlan> ReadyPlans { get; set; } = new HashSet<ReadyPlan>();
         public ICollection<Requset> BookingRequests { get; set; } = new HashSet<Requset>();
         public ICollection<Conversation> Conversations { get; set; } = new HashSet<Conversation>();

@@ -13,7 +13,8 @@ namespace DiscoverEgypt.Core.Entities
         public int Points { get; set; } = 0;
         public ICollection<Booking> Bookings { get; set; } = new HashSet<Booking>();
         public ICollection<Notification> Notifications { get; set; } = new HashSet<Notification>();
-        public ICollection<Review> Reviews { get; set; } = new HashSet<Review>();
+        public ICollection<PlaceReview> PlaceReviews { get; set; } = new HashSet<PlaceReview>();
+        public ICollection<GuideReview> GuideReviews { get; set; } = new HashSet<GuideReview>();
         public ICollection<CommunityPost> CommunityPosts { get; set; } = new HashSet<CommunityPost>();
         public ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
         public ICollection<Requset> BookingRequests { get; set; } = new HashSet<Requset>();

@@ -7,7 +7,7 @@ using DiscoverEgypt.Core.Entities;
 
 namespace DiscoverEgypt.Repository.Data.Configurations
 {
-    public class PlaceConfiguration : IEntityTypeConfiguration<Place>
+    public class PlaceReviewConfiguration : IEntityTypeConfiguration<Place>
     {
         public void Configure(EntityTypeBuilder<Place> builder)
         {

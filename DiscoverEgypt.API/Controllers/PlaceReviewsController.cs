@@ -10,9 +10,9 @@ namespace DiscoverEgypt.API.Controllers
     [Route("api/reviews")]
     public class ReviewsController : ControllerBase
     {
-        private readonly IReviewService _service;
+        private readonly IPlaceReviewService _service;
 
-        public ReviewsController(IReviewService service)
+        public ReviewsController(IPlaceReviewService service)
         {
             _service = service;
         }
@@ -20,7 +20,7 @@ namespace DiscoverEgypt.API.Controllers
         /// <summary>Submits a new review for a specific place.</summary>
         [HttpPost]
         [Authorize(Roles = "Tourist")]
-        public async Task<IActionResult> AddReview([FromBody] CreateReviewDto dto)
+        public async Task<IActionResult> AddReview([FromBody] CreatePlaceReviewDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             await _service.AddReviewAsync(userId, dto);
@@ -38,7 +38,7 @@ namespace DiscoverEgypt.API.Controllers
         /// <summary>Updates an existing review.</summary>
         [HttpPut("{id}")]
         [Authorize(Roles = "Tourist")]
-        public async Task<IActionResult> UpdateReview(int id, [FromBody] UpdateReviewDto dto)
+        public async Task<IActionResult> UpdateReview(int id, [FromBody] UpdatePlaceReviewDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             await _service.UpdateReviewAsync(id, userId, dto);
