@@ -1,4 +1,5 @@
-﻿using DiscoverEgypt.Core.Features.Users.DTOs;
+﻿using DiscoverEgypt.Core.Features.Authentication.DTOs;
+using DiscoverEgypt.Core.Features.Users.DTOs;
 
 namespace DiscoverEgypt.Core.Features.Users.Interfaces
 {
@@ -12,5 +13,14 @@ namespace DiscoverEgypt.Core.Features.Users.Interfaces
         Task DeleteUserAsync(string id);
         Task ChangePasswordAsync(string userId, ChangePasswordDto dto);
         Task<int> GetUserPointsAsync(string userId);
+        Task<List<GuideDto>> GetPendingGuidesAsync();
+        Task<List<GuideDto>> GetAllGuidesAsync();
+        Task ApproveGuideAsync(string guideId);
+        Task RejectGuideAsync(string guideId, string reason);
+        Task AddGuideLanguageAsync(string guideId, GuideLanguageDto dto);
+        Task RemoveGuideLanguageAsync(string guideId, int languageId);
+        Task SuspendGuideAsync(string guideId);
+        Task SetGuideAvailabilityAsync(string guideId, bool isOnline);
+        Task<GuideProfileDto> GetGuideProfileAsync(string guideId);
     }
 }

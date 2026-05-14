@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using System.Xml.Linq;
-
-namespace DiscoverEgypt.Core.Entities
+﻿namespace DiscoverEgypt.Core.Entities
 {
     public class CommunityPost : BaseEntity
     {
-        public string Title { get; set; }
         public string Content { get; set; }
-        public string TouristId { get; set; }
-        public TouristProfile Tourist { get; set; }
+        public string? Title { get; set; }
+        public string AuthorId { get; set; }
+        public ApplicationUser Author { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
+        public bool IsEdited { get; set; } = false;
+
+        public ICollection<PostImage> Images { get; set; } = new HashSet<PostImage>();
+        public ICollection<PostLike> Likes { get; set; } = new HashSet<PostLike>();
         public ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
     }
 }
-

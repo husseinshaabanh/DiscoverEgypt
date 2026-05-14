@@ -43,8 +43,6 @@ namespace DiscoverEgypt.Repository.Data.DBContext
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<PlaceReview> PlaceReviews { get; set; }
         public DbSet<GuideReview> GuideReviews { get; set; }
-        public DbSet<CommunityPost> CommunityPosts { get; set; }
-        public DbSet<Comment> Comments { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Notification> Notifications { get; set; }
@@ -54,5 +52,11 @@ namespace DiscoverEgypt.Repository.Data.DBContext
         public DbSet<PlanPlace> PlanPlaces { get; set; }
         public DbSet<PasswordResetOtp> PasswordResetOtps { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<CommunityPost> CommunityPosts { get; set; }
+        public DbSet<PostImage> PostImages { get; set; }
+        public DbSet<PostLike> PostLikes { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<CommentImage> CommentImages { get; set; }
+        public DbSet<CommentLike> CommentLikes { get; set; }
     }
 }

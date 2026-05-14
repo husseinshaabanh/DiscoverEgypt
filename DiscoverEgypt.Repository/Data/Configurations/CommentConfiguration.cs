@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using DiscoverEgypt.Core.Entities;
 
 namespace DiscoverEgypt.Repository.Data.Configurations
@@ -11,19 +8,27 @@ namespace DiscoverEgypt.Repository.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Comment> builder)
         {
-            builder.Property(comment => comment.Content)
+            builder.Property(c => c.Content)
                    .IsRequired()
-                   .HasMaxLength(1000);
+                   .HasMaxLength(2000);
 
-            builder.HasOne(comment => comment.Tourist)
-                   .WithMany(tourist => tourist.Comments)
-                   .HasForeignKey(comment => comment.TouristId)
+            builder.HasOne(c => c.Author)
+                   .WithMany()
+                   .HasForeignKey(c => c.AuthorId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(comment => comment.CommunityPost)
-                   .WithMany(communityPost => communityPost.Comments)
-                   .HasForeignKey(comment => comment.PostId)
+            builder.HasOne(c => c.Post)
+                   .WithMany(p => p.Comments)
+                   .HasForeignKey(c => c.PostId)
                    .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(c => c.ParentComment)
+                   .WithMany(c => c.Replies)
+                   .HasForeignKey(c => c.ParentCommentId)
+                   .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Property(c => c.CreatedAt)
+                   .HasDefaultValueSql("GETUTCDATE()");
         }
     }
 }

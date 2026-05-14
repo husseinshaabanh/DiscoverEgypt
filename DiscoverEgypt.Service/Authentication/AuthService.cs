@@ -89,7 +89,18 @@ namespace DiscoverEgypt.Service.Authentication
                     StartDate = DateTime.UtcNow
                 });
             }
-
+            if (model.Languages != null && model.Languages.Any())
+            {
+                foreach (var lang in model.Languages)
+                {
+                    _context.GuideLanguages.Add(new GuideLanguage
+                    {
+                        GuideId = user.Id,
+                        LanguageId = lang.LanguageId,
+                        Level = lang.Level
+                    });
+                }
+            }
             await _context.SaveChangesAsync();
 
             var (token, expiresOn) = await _tokenService.GenerateTokenAsync(user);

@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using DiscoverEgypt.Core.Entities;
 
 namespace DiscoverEgypt.Repository.Data.Configurations
@@ -11,18 +8,20 @@ namespace DiscoverEgypt.Repository.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<CommunityPost> builder)
         {
-            builder.Property(communityPost => communityPost.Title)
+            builder.Property(p => p.Content)
                    .IsRequired()
-                   .HasMaxLength(100);
+                   .HasMaxLength(5000);
 
-            builder.Property(communityPost => communityPost.Content)
-                   .IsRequired()
-                   .HasMaxLength(2000);
+            builder.Property(p => p.Title)
+                   .HasMaxLength(200);
 
-            builder.HasOne(communityPost => communityPost.Tourist)
-                   .WithMany(tourist => tourist.CommunityPosts)
-                   .HasForeignKey(communityPost => communityPost.TouristId)
-                   .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(p => p.Author)
+                   .WithMany()
+                   .HasForeignKey(p => p.AuthorId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(p => p.CreatedAt)
+                   .HasDefaultValueSql("GETUTCDATE()");
         }
     }
 }

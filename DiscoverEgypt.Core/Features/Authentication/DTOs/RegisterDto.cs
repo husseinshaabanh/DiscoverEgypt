@@ -36,7 +36,7 @@ namespace DiscoverEgypt.Core.Features.Authentication.DTOs
         [Required]
         public UserRole Role { get; set; }
 
-        public List<int>? LanguageIds { get; set; }
+        public List<GuideLanguageDto>? Languages { get; set; }
         public string? LicenseNumber { get; set; }
         public IFormFile? LicenseImage { get; set; }
     }

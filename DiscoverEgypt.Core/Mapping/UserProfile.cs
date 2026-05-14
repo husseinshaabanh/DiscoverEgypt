@@ -13,10 +13,12 @@ namespace DiscoverEgypt.Core.Mapping
                     opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName,
                     opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest => dest.ImageUrl,
+                    opt => opt.MapFrom(src => src.ImageUrl))
                 .ForMember(dest => dest.Nationality,
                     opt => opt.MapFrom(src => src.Nationality.Name))
                 .ForMember(dest => dest.Roles,
-                    opt => opt.Ignore()); // بتيجي من UserManager منفصل
+                    opt => opt.Ignore());
         }
     }
 }

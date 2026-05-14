@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace DiscoverEgypt.Core.Features.Users.DTOs
 {
@@ -9,6 +10,7 @@ namespace DiscoverEgypt.Core.Features.Users.DTOs
 
         [MaxLength(50)]
         public string? LastName { get; set; }
+        public IFormFile? Image { get; set; } 
 
         [Phone]
         public string? PhoneNumber { get; set; }

@@ -22,8 +22,9 @@ namespace DiscoverEgypt.Repository
         public async Task<IReadOnlyList<ReadyPlan>> GetAllWithPlacesAsync()
         {
             return await _context.ReadyPlans
-                .Include(p => p.PlanPlaces)
-                .ToListAsync();
+                .Include(r => r.PlanPlaces)
+                .Include(r => r.Guide)
+                .ThenInclude(g => g.User).ToListAsync();
         }
 
         public async Task<ReadyPlan?> GetByIdWithPlacesAsync(int id)

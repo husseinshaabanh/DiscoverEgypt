@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using DiscoverEgypt.Core.Entities;
+using DiscoverEgypt.Core.Enum;
 using DiscoverEgypt.Core.Exceptions;
+using DiscoverEgypt.Core.Features.Authentication.DTOs;
+using DiscoverEgypt.Core.Features.UploadImage.Interfaces;
 using DiscoverEgypt.Core.Features.Users.DTOs;
 using DiscoverEgypt.Core.Features.Users.Interfaces;
 using DiscoverEgypt.Repository.Data.DBContext;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace DiscoverEgypt.Service
 {
@@ -14,12 +17,14 @@ namespace DiscoverEgypt.Service
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IUploadService _uploadService;
 
-        public UserService(UserManager<ApplicationUser> userManager, ApplicationDbContext context, IMapper mapper)
+        public UserService(UserManager<ApplicationUser> userManager, ApplicationDbContext context, IMapper mapper, IUploadService uploadService)
         {
             _userManager = userManager;
             _context = context;
             _mapper = mapper;
+            _uploadService = uploadService;
         }
 
         public async Task<UserProfileDto> GetCurrentUserAsync(string userId)
@@ -84,6 +89,9 @@ namespace DiscoverEgypt.Service
             user.LastName = dto.LastName ?? user.LastName;
             user.PhoneNumber = dto.PhoneNumber ?? user.PhoneNumber;
 
+            if (dto.Image != null)
+                user.ImageUrl = await _uploadService.UploadImageAsync(dto.Image, "avatars");
+
             var result = await _userManager.UpdateAsync(user);
 
             if (!result.Succeeded)
@@ -145,5 +153,178 @@ namespace DiscoverEgypt.Service
 
             return tourist.Points;
         }
+
+        public async Task<List<GuideDto>> GetPendingGuidesAsync()
+        {
+            var guides = await _context.Guides
+                .Include(g => g.User)
+                .Where(g => g.Status == GuideStatus.Pending)
+                .ToListAsync();
+
+            return guides.Select(MapGuideToDto).ToList();
+        }
+
+        // ─── Get All Guides ───
+        public async Task<List<GuideDto>> GetAllGuidesAsync()
+        {
+            var guides = await _context.Guides
+                .Include(g => g.User)
+                .ToListAsync();
+
+            return guides.Select(MapGuideToDto).ToList();
+        }
+
+        // ─── Approve Guide ───
+        public async Task ApproveGuideAsync(string guideId)
+        {
+            var guide = await _context.Guides
+                .FirstOrDefaultAsync(g => g.UserId == guideId);
+
+            if (guide == null)
+                throw new NotFoundException("Guide not found");
+
+            if (guide.Status == GuideStatus.Active)
+                throw new ConflictException("Guide is already approved");
+
+            if (guide.Status == GuideStatus.Rejected)
+                throw new ValidationException("Cannot approve a rejected guide");
+
+            guide.Status = GuideStatus.Active;
+
+            await _context.SaveChangesAsync();
+        }
+
+        // ─── Reject Guide ───
+        public async Task RejectGuideAsync(string guideId, string reason)
+        {
+            var guide = await _context.Guides
+                .FirstOrDefaultAsync(g => g.UserId == guideId);
+
+            if (guide == null)
+                throw new NotFoundException("Guide not found");
+
+            if (guide.Status == GuideStatus.Rejected)
+                throw new ConflictException("Guide is already rejected");
+
+            guide.Status = GuideStatus.Rejected;
+            guide.EndDate = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+        }
+
+        // ─── Get Guide Profile ───
+        public async Task<GuideProfileDto> GetGuideProfileAsync(string guideId)
+        {
+            var guide = await _context.Guides
+                .Include(g => g.User)
+                .Include(g => g.GuideLanguages).ThenInclude(gl => gl.Language)
+                .Include(g => g.GuideReviews)
+                .FirstOrDefaultAsync(g => g.UserId == guideId);
+
+            if (guide == null)
+                throw new NotFoundException("Guide not found");
+
+            return new GuideProfileDto
+            {
+                UserId = guide.UserId,
+                FullName = $"{guide.User.FirstName} {guide.User.LastName}",
+                Email = guide.User.Email!,
+                ImageUrl = guide.User.ImageUrl,
+                Status = guide.Status.ToString(),
+                StartDate = guide.StartDate,
+                Languages = guide.GuideLanguages.Select(gl => new GuideLanguageResponseDto
+                {
+                    LanguageId = gl.LanguageId,
+                    LanguageName = gl.Language.Name,
+                    Level = gl.Level.ToString()
+                }).ToList(),
+                AverageRating = guide.GuideReviews.Any()
+                    ? guide.GuideReviews.Average(r => r.Rating)
+                    : 0,
+                ReviewsCount = guide.GuideReviews.Count
+            };
+        }
+
+        // ─── Add Language ───
+        public async Task AddGuideLanguageAsync(string guideId, GuideLanguageDto dto)
+        {
+            var guide = await _context.Guides.FirstOrDefaultAsync(g => g.UserId == guideId);
+
+            if (guide == null)
+                throw new NotFoundException("Guide not found");
+
+            var exists = await _context.GuideLanguages
+                .AnyAsync(gl => gl.GuideId == guideId && gl.LanguageId == dto.LanguageId);
+
+            if (exists)
+                throw new ConflictException("Language already added");
+
+            _context.GuideLanguages.Add(new GuideLanguage
+            {
+                GuideId = guideId,
+                LanguageId = dto.LanguageId,
+                Level = dto.Level
+            });
+
+            await _context.SaveChangesAsync();
+        }
+
+        // ─── Remove Language ───
+        public async Task RemoveGuideLanguageAsync(string guideId, int languageId)
+        {
+            var language = await _context.GuideLanguages
+                .FirstOrDefaultAsync(gl => gl.GuideId == guideId && gl.LanguageId == languageId);
+
+            if (language == null)
+                throw new NotFoundException("Language not found");
+
+            _context.GuideLanguages.Remove(language);
+            await _context.SaveChangesAsync();
+        }
+
+        // ─── Suspend Guide ───
+        public async Task SuspendGuideAsync(string guideId)
+        {
+            var guide = await _context.Guides.FirstOrDefaultAsync(g => g.UserId == guideId);
+
+            if (guide == null)
+                throw new NotFoundException("Guide not found");
+
+            if (guide.Status == GuideStatus.Suspended)
+                throw new ConflictException("Guide is already suspended");
+
+            guide.Status = GuideStatus.Suspended;
+            await _context.SaveChangesAsync();
+        }
+
+        // ─── Set Availability ───
+        public async Task SetGuideAvailabilityAsync(string guideId, bool isOnline)
+        {
+            var guide = await _context.Guides.FirstOrDefaultAsync(g => g.UserId == guideId);
+
+            if (guide == null)
+                throw new NotFoundException("Guide not found");
+
+            if (guide.Status == GuideStatus.Pending)
+                throw new ValidationException("Guide is not approved yet");
+
+            if (guide.Status == GuideStatus.Suspended)
+                throw new ValidationException("Guide is suspended");
+
+            guide.Status = isOnline ? GuideStatus.Active : GuideStatus.Offline;
+            await _context.SaveChangesAsync();
+        }
+
+        // ─── Private Helper ───
+        private static GuideDto MapGuideToDto(GuideProfile g) => new()
+        {
+            UserId = g.UserId,
+            FullName = $"{g.User.FirstName} {g.User.LastName}",
+            Email = g.User.Email!,
+            LicenseNumber = g.LicenseNumber,
+            LicenseImageUrl = g.LicenseImageUrl,
+            Status = g.Status.ToString(),
+            StartDate = g.StartDate
+        };
     }
 }

@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+﻿using DiscoverEgypt.Core.Features.Authentication.DTOs;
 using DiscoverEgypt.Core.Features.Users.DTOs;
 using DiscoverEgypt.Core.Features.Users.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DiscoverEgypt.API.Controllers
 {
@@ -90,6 +91,89 @@ namespace DiscoverEgypt.API.Controllers
         {
             await _userService.DeleteUserAsync(id);
             return Ok(new { message = "User deleted successfully" });
+        }
+        /// <summary>Retrieves all guides. Admin only.</summary>
+        [HttpGet("guides")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllGuides()
+        {
+            var guides = await _userService.GetAllGuidesAsync();
+            return Ok(guides);
+        }
+
+        /// <summary>Retrieves all pending guides. Admin only.</summary>
+        [HttpGet("guides/pending")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetPendingGuides()
+        {
+            var guides = await _userService.GetPendingGuidesAsync();
+            return Ok(guides);
+        }
+
+        /// <summary>Approves a guide application. Admin only.</summary>
+        [HttpPut("guides/{id}/approve")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ApproveGuide(string id)
+        {
+            await _userService.ApproveGuideAsync(id);
+            return Ok(new { message = "Guide approved successfully" });
+        }
+
+        /// <summary>Rejects a guide application. Admin only.</summary>
+        [HttpPut("guides/{id}/reject")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RejectGuide(string id, [FromBody] RejectGuideDto dto)
+        {
+            await _userService.RejectGuideAsync(id, dto.Reason);
+            return Ok(new { message = "Guide rejected successfully" });
+        }
+
+        /// <summary>Retrieves guide profile with languages and rating.</summary>
+        [HttpGet("guides/{id}")]
+        public async Task<IActionResult> GetGuideProfile(string id)
+        {
+            var result = await _userService.GetGuideProfileAsync(id);
+            return Ok(result);
+        }
+
+        /// <summary>Guide adds a language to his profile.</summary>
+        [HttpPost("guides/languages")]
+        [Authorize(Roles = "Guide")]
+        public async Task<IActionResult> AddLanguage([FromBody] GuideLanguageDto dto)
+        {
+            var guideId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            await _userService.AddGuideLanguageAsync(guideId, dto);
+            return StatusCode(201, new { message = "Language added successfully" });
+        }
+
+        /// <summary>Guide removes a language from his profile.</summary>
+        [HttpDelete("guides/languages/{languageId}")]
+        [Authorize(Roles = "Guide")]
+        public async Task<IActionResult> RemoveLanguage(int languageId)
+        {
+            var guideId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            await _userService.RemoveGuideLanguageAsync(guideId, languageId);
+            return Ok(new { message = "Language removed successfully" });
+        }
+
+
+        /// <summary>Guide sets his availability status.</summary>
+        [HttpPut("guides/availability")]
+        [Authorize(Roles = "Guide")]
+        public async Task<IActionResult> SetAvailability([FromBody] bool isOnline)
+        {
+            var guideId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            await _userService.SetGuideAvailabilityAsync(guideId, isOnline);
+            return Ok(new { message = isOnline ? "You are now online" : "You are now offline" });
+        }
+
+        /// <summary>Suspends a guide. Admin only.</summary>
+        [HttpPut("guides/{id}/suspend")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SuspendGuide(string id)
+        {
+            await _userService.SuspendGuideAsync(id);
+            return Ok(new { message = "Guide suspended successfully" });
         }
     }
 }
