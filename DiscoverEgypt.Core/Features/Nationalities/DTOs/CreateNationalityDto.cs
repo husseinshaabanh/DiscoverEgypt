@@ -6,5 +6,6 @@ namespace DiscoverEgypt.Core.Features.Nationalities.DTOs
     {
         [Required, MaxLength(100)]
         public string Name { get; set; }
+        public string? NameAr { get; set; }
     }
 }

@@ -7,6 +7,7 @@ namespace DiscoverEgypt.Core.Entities
     public class Nationality : BaseEntity
     {
         public string Name { get; set; }
+        public string? NameAr { get; set; }
         public ICollection<ApplicationUser> Users { get; set; } = new HashSet<ApplicationUser>();
     }
 }

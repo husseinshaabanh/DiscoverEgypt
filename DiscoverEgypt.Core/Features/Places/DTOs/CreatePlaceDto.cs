@@ -7,12 +7,16 @@ namespace DiscoverEgypt.Core.Features.Places.DTOs
     {
         [Required, MaxLength(200)]
         public string Name { get; set; }
+        public string? NameAr { get; set; }
 
         [Required]
         public string Description { get; set; }
+        public string? DescriptionAr { get; set; }
 
         [Required, MaxLength(100)]
         public string City { get; set; }
+        public string? CityAr { get; set; }
+
 
         [Required]
         public decimal Latitude { get; set; }

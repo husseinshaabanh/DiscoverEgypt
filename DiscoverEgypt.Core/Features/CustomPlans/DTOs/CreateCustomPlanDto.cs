@@ -7,9 +7,11 @@ namespace DiscoverEgypt.Core.Features.CustomPlans.DTOs
     {
         [Required, MaxLength(200)]
         public string Title { get; set; }
+        public string? TitleAr { get; set; }
 
         [Required]
         public string Description { get; set; }
+        public string? DescriptionAr { get; set; }
 
         [Required]
         public DateTime StartDateTime { get; set; }

@@ -4,7 +4,9 @@
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public string? TitleAr { get; set; }
         public string Description { get; set; }
+        public string? DescriptionAr { get; set; }
         public DateTime StartDateTime { get; set; }
         public DateTime EndDateTime { get; set; }
         public string TouristId { get; set; }
