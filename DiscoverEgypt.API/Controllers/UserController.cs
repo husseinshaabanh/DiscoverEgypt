@@ -93,11 +93,11 @@ namespace DiscoverEgypt.API.Controllers
             return Ok(new { message = "User deleted successfully" });
         }
         /// <summary>Retrieves all guides. Admin only.</summary>
-        [HttpGet("guides")]
+        [HttpGet("guides/all")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllGuides()
+        public async Task<IActionResult> GetAllGuidesAdmin()
         {
-            var guides = await _userService.GetAllGuidesAsync();
+            var guides = await _userService.GetAllGuidesAsync(activeOnly: false);
             return Ok(guides);
         }
 
@@ -126,6 +126,23 @@ namespace DiscoverEgypt.API.Controllers
         {
             await _userService.RejectGuideAsync(id, dto.Reason);
             return Ok(new { message = "Guide rejected successfully" });
+        }
+
+        /// <summary>Suspends a guide. Admin only.</summary>
+        [HttpPut("guides/{id}/suspend")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SuspendGuide(string id)
+        {
+            await _userService.SuspendGuideAsync(id);
+            return Ok(new { message = "Guide suspended successfully" });
+        }
+
+        /// <summary>Retrieves all active guides. Accessible by all authenticated users.</summary>
+        [HttpGet("guides")]
+        public async Task<IActionResult> GetAllGuides()
+        {
+            var guides = await _userService.GetAllGuidesAsync(activeOnly: true);
+            return Ok(guides);
         }
 
         /// <summary>Retrieves guide profile with languages and rating.</summary>
@@ -165,15 +182,6 @@ namespace DiscoverEgypt.API.Controllers
             var guideId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             await _userService.SetGuideAvailabilityAsync(guideId, isOnline);
             return Ok(new { message = isOnline ? "You are now online" : "You are now offline" });
-        }
-
-        /// <summary>Suspends a guide. Admin only.</summary>
-        [HttpPut("guides/{id}/suspend")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> SuspendGuide(string id)
-        {
-            await _userService.SuspendGuideAsync(id);
-            return Ok(new { message = "Guide suspended successfully" });
         }
     }
 }

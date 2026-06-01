@@ -14,7 +14,7 @@ namespace DiscoverEgypt.Core.Features.Users.Interfaces
         Task ChangePasswordAsync(string userId, ChangePasswordDto dto);
         Task<int> GetUserPointsAsync(string userId);
         Task<List<GuideDto>> GetPendingGuidesAsync();
-        Task<List<GuideDto>> GetAllGuidesAsync();
+        Task<List<GuideDto>> GetAllGuidesAsync(bool activeOnly = false);
         Task ApproveGuideAsync(string guideId);
         Task RejectGuideAsync(string guideId, string reason);
         Task AddGuideLanguageAsync(string guideId, GuideLanguageDto dto);

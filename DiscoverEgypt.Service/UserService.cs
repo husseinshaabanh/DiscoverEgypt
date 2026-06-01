@@ -165,12 +165,14 @@ namespace DiscoverEgypt.Service
         }
 
         // ─── Get All Guides ───
-        public async Task<List<GuideDto>> GetAllGuidesAsync()
+        public async Task<List<GuideDto>> GetAllGuidesAsync(bool activeOnly = false)
         {
-            var guides = await _context.Guides
-                .Include(g => g.User)
-                .ToListAsync();
+            var query = _context.Guides.Include(g => g.User).AsQueryable();
 
+            if (activeOnly)
+                query = query.Where(g => g.Status == GuideStatus.Active);
+
+            var guides = await query.ToListAsync();
             return guides.Select(MapGuideToDto).ToList();
         }
 
