@@ -21,6 +21,7 @@ namespace DiscoverEgypt.API.Controllers
         /// <summary>
         /// Get the feed of posts for the authenticated user, including posts from followed users and popular posts.
         /// </summary>
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetFeed(
             [FromQuery] int page = 1,
@@ -34,6 +35,7 @@ namespace DiscoverEgypt.API.Controllers
         /// <summary>
         /// Get a specific post by its ID, including details like content, images, author info, comments, and likes.
         /// </summary>
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPost(int id)
         {
@@ -122,6 +124,7 @@ namespace DiscoverEgypt.API.Controllers
         /// <summary>
         /// Get all comments for a specific post by its ID. This will return a list of comments, including the comment content, author information, and any likes on the comments. The authenticated user's like status on each comment will also be included.
         /// </summary>
+        [AllowAnonymous]
         [HttpGet("{id}/comments")]
         public async Task<IActionResult> GetComments(int id)
         {
